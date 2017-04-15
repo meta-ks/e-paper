@@ -50,10 +50,13 @@ def extract_data(html_text,tag,greedy=1,remove_comments=False):
 	
 	if remove_comments:
 		#removing comments:
-		comment_list = re.findall('<!--.*?-->|<comment>.*?</comment>',html_text,re.DOTALL)
-		for comment in comment_list:
-			html_text = html_text.replace(comment,'\n')	#replaces the comment block with a new line
+		html_text = re.sub('<!--.*?-->|<comment>.*?</comment>','\n',html_text,re.DOTALL)
 		print('[*]Comments removed!')
+		
+		#comment_list = re.findall('<!--.*?-->|<comment>.*?</comment>',html_text,re.DOTALL)
+		#for comment in comment_list:
+			#html_text = html_text.replace(comment,'\n')	#replaces the comment block with a new line
+		
 		'''start_index_list, end_index_list = [],[]
 
 		for match in re_obj.finditer(html_text):
