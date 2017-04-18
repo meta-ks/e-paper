@@ -9,7 +9,8 @@ import methods
 def main():
 
 	#today = time.asctime(time.localtime(time.time()))
-	today = time.strftime("%a, %d %b %Y", time.gmtime())
+	local_time = time.localtime()
+	today = time.strftime("%a, %d %b %Y", local_time)
 
 	print('\nHi! today is {} '.format(today))
 	print('[*]Going to download today\'s issue...')
@@ -28,7 +29,7 @@ def main():
 	mode = ini['DEFAULT']['auto_pilot'] 	# 1 for auto; no user interaction
 
 	if(mode == '1'):
-		stat = auto_pilot(today,ini)
+		stat = auto_pilot(today,ini,local_time)
 	else:
 		pass#stat = manual.main(today,ini)
 
@@ -37,7 +38,7 @@ def main():
 	else:
 		print('\n[*]Din\'t work! Trace and pull or create an issue...you know :)')
 
-def auto_pilot(today,ini):
+def auto_pilot(today,ini,local_time):
 	print('[*]Auto-mode...\n')
 
 	file_name = '_the_Hindu__' + today + '.pdf'
@@ -52,16 +53,24 @@ def auto_pilot(today,ini):
 			except:
 				pass
 
+	#method params
 	section_no = ini['DEFAULT']['use_section']
 	url = ini[section_no]['url']
 	method_name = ini[section_no]['method_name']
+	date_x = int(ini[section_no]['date_x'])
+	date_y = int(ini[section_no]['date_y'])
+	url_x = int(ini[section_no]['url_x'])
+	url_y = int(ini[section_no]['url_y'])
 
-	stat = methods.use_method(method_name,url,file_name)
+	method_dict = {'name':method_name, 'url':url, 'date_x':date_x, 'date_y':date_y, 'url_x':url_x, 'url_y':url_y}
+
+
+	stat = methods.use_method(method_dict,file_name,match_time=local_time)
 
 	if stat:
 		if ini['DEFAULT']['move_old'] == '1':
 			for l in os.listdir(os.curdir):		#to move older issues to old_issuse dir
-				print(l)
+				#print(l)
 				if l.endswith('.pdf') and not (l == file_name) and ('_the_Hindu__' in l):		#to avoid today's file to be copied to old dir
 					try:
 						old_issue_dir = ini['DEFAULT']['old_issue_dir']
